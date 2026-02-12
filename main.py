@@ -84,4 +84,37 @@ if 'leverage' in merged_df.columns:
     print(segment_performance.head(10))
 
 print("\nAssignment complete.")
+
+plt.show()
+
+
+# --- BONUS: Clustering Traders into Archetypes ---
+def categorize_trader(row):
+    # We use Size USD and is_win since leverage is missing
+    if row['Size USD'] > 5000 and row['is_win'] == True:
+        return 'Profitable Whale'
+    elif row['Size USD'] > 5000 and row['is_win'] == False:
+        return 'High-Risk Speculator'
+    elif row['Size USD'] < 1000 and row['is_win'] == True:
+        return 'Consistent Small Trader'
+    else:
+        return 'Retail Participant'
+
+# Apply the categorization
+merged_df['archetype'] = merged_df.apply(categorize_trader, axis=1)
+
+# Analyze archetype distribution
+archetype_counts = merged_df['archetype'].value_counts()
+print("\n--- Bonus: Trader Archetype Distribution ---")
+print(archetype_counts)
+
+# Save the Bonus Chart
+plt.figure(figsize=(10, 6))
+archetype_counts.plot(kind='pie', autopct='%1.1f%%', colors=sns.color_palette('pastel'))
+plt.title('Distribution of Trader Archetypes')
+plt.ylabel('')  # Hides the vertical label for a cleaner look
+plt.tight_layout()
+plt.savefig('trader_archetypes.png')
+
+print("\nBonus Chart saved: trader_archetypes.png")
 plt.show()
